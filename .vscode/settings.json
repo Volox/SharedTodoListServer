@@ -3,5 +3,6 @@
 		"**/node_modules": true
 	},
 	"editor.formatOnSave": true,
-	"eslint.autoFixOnSave": true
+	"eslint.autoFixOnSave": true,
+	"typescript.tsdk": "node_modules/typescript/lib"
 }
