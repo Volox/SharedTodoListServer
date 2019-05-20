@@ -1,4 +1,7 @@
 import express, { RequestHandler } from 'express';
+import { ObjectId } from 'bson';
+
+import { getDb } from './db/mongo';
 
 const auth: RequestHandler = function(_req, _res, next) {
   console.log(`auth`);
@@ -15,12 +18,28 @@ function createResource(prefix: string) {
 
   crudRouter.use(queryParamLogger);
 
-  crudRouter.get('/:id', function(req, res) {
-    res.send(`${prefix} GET ${req.params.id}`);
+  crudRouter.get('/:id', async (req, res) => {
+    // res.send(`${prefix} GET ${req.params.id}`);
+
+    const db = await getDb(prefix);
+    const posts = db.collection('posts');
+
+    const post = await posts.findOne({
+      _id: new ObjectId(req.params.id)
+    });
+
+    res.json(post);
   });
 
-  crudRouter.post('/', auth, function(req, res) {
-    res.send(`${prefix} POST`);
+  crudRouter.post('/', async function(req, res) {
+    const db = await getDb(prefix);
+    const posts = db.collection('posts');
+
+    const response = await posts.insertOne({
+      name: 'sadasd'
+    });
+
+    res.json(response.insertedId);
   });
 
   return crudRouter;
